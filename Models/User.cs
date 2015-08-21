@@ -9,7 +9,7 @@ namespace KPMGAssessment.Models
     public class User
     {
         [Key]
-        public int UserId { get; set; }
+        public int Id { get; set; }
 
         public string Login { get; set; }
 

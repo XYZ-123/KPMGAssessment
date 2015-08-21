@@ -2,7 +2,7 @@
 
 using Microsoft.Owin;
 
-[assembly:OwinStartup(typeof(Startup))]
+[assembly: OwinStartup(typeof(Startup))]
 namespace KPMGAssessment
 {
     using System.Web.Http;
@@ -12,6 +12,7 @@ namespace KPMGAssessment
     using Microsoft.Owin.Cors;
 
     using Owin;
+    using KPMGAssessment.Context;
 
     public class Startup
     {
@@ -23,7 +24,10 @@ namespace KPMGAssessment
             RouteConfig.RegisterRoutes(config);
             FormatterConfig.RegisterFormatters(config);
             UnityConfig.RegisterComponents(config);
-            
+
+            // Creating context first time
+            var storageDb = new StorageDbContext();
+
             app.UseWebApi(config);
         }
     }

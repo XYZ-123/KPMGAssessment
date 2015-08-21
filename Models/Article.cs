@@ -10,7 +10,7 @@ namespace KPMGAssessment.Models
     public class Article
     {
         [Key]
-        public int ArticleId { get; set; }
+        public int Id { get; set; }
 
         public string Title { get; set; }
 
@@ -21,10 +21,10 @@ namespace KPMGAssessment.Models
         public long Likes { get; set; }
 
         public DateTime LastEdited { get; set; }
-
+        
+        [ForeignKey("Author")]
         public int AuthorId { get; set; }
 
-        [ForeignKey("Author")]
         public virtual User Author { get; set; }
 
         public virtual List<Comment> Comments { get; set; }

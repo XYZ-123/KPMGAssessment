@@ -10,7 +10,7 @@ namespace KPMGAssessment.Models
     public class Comment
     {
         [Key]
-        public int CommendId { get; set; }
+        public int Id { get; set; }
 
         public string Body { get; set; }
 

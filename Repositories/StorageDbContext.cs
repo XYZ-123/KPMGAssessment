@@ -11,6 +11,12 @@ namespace KPMGAssessment.Context
 
     public class StorageDbContext : DbContext
     {
+        public StorageDbContext() : base("StorageDbContext")
+        {
+            if(!Database.Exists())
+                Database.Initialize(false);
+        }
+
         public DbSet<Article> Articles { get; set; }
 
         public DbSet<User> Users { get; set; }
