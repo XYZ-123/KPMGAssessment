@@ -7,17 +7,22 @@ using System.Web.Routing;
 
 namespace KPMGAssessment
 {
+    using System.Web.Http;
+    using System.Web.Http.Cors;
+
     public class RouteConfig
     {
-        public static void RegisterRoutes(RouteCollection routes)
+        public static void RegisterRoutes(HttpConfiguration config)
         {
-            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            config.MapHttpAttributeRoutes();
+            EnableCors(config);
+            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
+        }
 
-            routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
-            );
+        private static void EnableCors(HttpConfiguration config)
+        {
+            var corsAttr = new EnableCorsAttribute("*", "*", "*");
+            config.EnableCors(corsAttr);
         }
     }
 }

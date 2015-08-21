@@ -3,11 +3,19 @@ using System.Web.Mvc;
 
 namespace KPMGAssessment
 {
-    public class FilterConfig
+    using System.Web.Http;
+
+    using Newtonsoft.Json;
+
+    public class FormatterConfig
     {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        public static void RegisterFormatters(HttpConfiguration config)
         {
-            filters.Add(new HandleErrorAttribute());
+            var jsonFormatter = config.Formatters.JsonFormatter;
+            config.Formatters.Clear();
+
+            jsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            config.Formatters.Add(jsonFormatter);
         }
     }
 }

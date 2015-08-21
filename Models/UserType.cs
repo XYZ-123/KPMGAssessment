@@ -5,7 +5,9 @@ using System.Web;
 
 namespace KPMGAssessment.Models
 {
-    public class UserType
+    public enum UserType
     {
+        Employee,
+        Publisher
     }
 }

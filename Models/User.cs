@@ -7,5 +7,10 @@ namespace KPMGAssessment.Models
 {
     public class User
     {
+        public int UserId { get; set; }
+
+        public string Login { get; set; }
+
+        public UserType UserType { get; set; }
     }
 }
