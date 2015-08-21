@@ -7,7 +7,7 @@ namespace KPMGAssessment.Models
 {
     public enum UserType
     {
-        Employee,
+        Employee = 0,
         Publisher
     }
 }

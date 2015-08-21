@@ -12,11 +12,15 @@ namespace KPMGAssessment.Controllers
 
     using KPMGAssessment.Models;
     using KPMGAssessment.Repositories;
+    using Newtonsoft.Json;
+    using System.Text;
+    using System.Net;
 
     [RoutePrefix("api/v1/users")]
     public class UsersController : ApiController
     {
         private readonly IUsersRepository repository;
+        private readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 
         public UsersController(IUsersRepository repository)
         {
@@ -27,37 +31,77 @@ namespace KPMGAssessment.Controllers
 
             this.repository = repository;
         }
+
         [Route("")]
         [HttpGet]
         public async Task<IHttpActionResult> GetAll()
         {
-            return new OkResult(new HttpRequestMessage());
+            var users = await repository.GetAllAsync();
+
+            return new JsonResult<IEnumerable<User>>(users, serializerSettings, Encoding.Unicode, this);
         }
 
         [Route("{id}")]
         [HttpGet]
         public async Task<IHttpActionResult> GetOne([FromUri]int id)
         {
-            return new OkResult(new HttpRequestMessage());
+            var user = await repository.GetUserAsync(id);
+
+            if (user == null)
+            {
+                return new StatusCodeResult(HttpStatusCode.NotFound, this);
+            }
+
+            return new JsonResult<User>(user, serializerSettings, Encoding.Unicode, this);
         }
 
         [Route("")]
         [HttpPost]
         public async Task<IHttpActionResult> Post([FromBody]User user)
         {
-            return new OkResult(new HttpRequestMessage());
+            try
+            {
+                var createdUser = await repository.CreateUserAsync(user);
+
+                return new JsonResult<User>(createdUser, serializerSettings, Encoding.Unicode, this);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestErrorMessageResult(ex.Message, this);
+            }
         }
 
         [Route("{id}")]
         [HttpPut]
-        public void Put([FromUri]int id, [FromBody]User user)
+        public async Task<IHttpActionResult> Put([FromUri]int id, [FromBody]User user)
         {
+            try
+            {
+                var updatedUser = await repository.UpdateUserAsync(id, user);
+
+                return new JsonResult<User>(updatedUser, serializerSettings, Encoding.Unicode, this);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestErrorMessageResult(ex.Message, this);
+            }
         }
 
         [Route("{id}")]
         [HttpDelete]
-        public void Delete([FromUri]int id)
+        public async Task<IHttpActionResult> Delete([FromUri]int id)
         {
+            HttpStatusCode returnCode = HttpStatusCode.NoContent;
+            try
+            {
+                await repository.DeleteUserAsync(id);
+            }
+            catch
+            {
+                returnCode = HttpStatusCode.NotFound;
+            }
+
+            return new StatusCodeResult(returnCode, this);
         }
     }
 }
