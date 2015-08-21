@@ -1,35 +1,76 @@
-﻿using System;
+﻿using KPMGAssessment.Context;
+using KPMGAssessment.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace KPMGAssessment.Repositories
 {
     public class ArticlesRepository : IArticlesRepository
     {
-        public System.Threading.Tasks.Task<Models.Article> GetArticleAsync(int id)
+        public async Task<Article> GetArticleAsync(int id)
         {
-            throw new NotImplementedException();
+            Article article;
+
+            using(var context = new StorageDbContext())
+            {
+                article = await context.Articles.FindAsync(id);
+            }
+
+            return article;
         }
 
-        public System.Threading.Tasks.Task<IEnumerable<Models.Article>> GetAllAsync()
+        public async Task<IEnumerable<Article>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            using (var context = new StorageDbContext())
+            {
+                return context.Articles.ToList();
+            }
         }
 
-        public System.Threading.Tasks.Task<Models.Article> CreateArticleAsync(Models.Article article)
+        public async Task<Article> CreateArticleAsync(Article article)
         {
-            throw new NotImplementedException();
+            Article savedArticle;
+
+            using (var context = new StorageDbContext())
+            {
+                savedArticle = context.Articles.Add(article);
+                await context.SaveChangesAsync();
+            }
+
+            return savedArticle;
         }
 
-        public System.Threading.Tasks.Task<Models.Article> UpdateArticleAsync(int id, Models.Article article)
+        public async Task<Article> UpdateArticleAsync(int id, Article article)
         {
-            throw new NotImplementedException();
+            using (var context = new StorageDbContext())
+            {
+                var articleToUpdate = await context.Articles.FindAsync(id);
+                MergeArticles(articleToUpdate, article);
+                await context.SaveChangesAsync();
+            }
+            return article;
         }
 
-        public System.Threading.Tasks.Task DeleteArticleAsync(int id)
+        public async Task DeleteArticleAsync(int id)
         {
-            throw new NotImplementedException();
+            using (var context = new StorageDbContext())
+            {
+                var articleToRemove = await context.Articles.FindAsync(id);
+                context.Articles.Remove(articleToRemove);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private void MergeArticles(Article articleToUpdate, Article article)
+        {
+            articleToUpdate.Title = article.Body;
+            articleToUpdate.Likes = article.Likes;
+            articleToUpdate.LastEdited = article.LastEdited;
+            articleToUpdate.Body = article.Body;
+            articleToUpdate.Comments = articleToUpdate.Comments.Union(article.Comments).ToList();
         }
     }
 }

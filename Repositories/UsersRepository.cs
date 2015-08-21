@@ -1,35 +1,72 @@
-﻿using System;
+﻿using KPMGAssessment.Context;
+using KPMGAssessment.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace KPMGAssessment.Repositories
 {
     public class UsersRepository : IUsersRepository
     {
-        public System.Threading.Tasks.Task<Models.User> GetUserAsync(int id)
+        public async Task<User> GetUserAsync(int id)
         {
-            throw new NotImplementedException();
+            User user;
+
+            using (var context = new StorageDbContext())
+            {
+                user = await context.Users.FindAsync(id);
+            }
+
+            return user;
         }
 
-        public System.Threading.Tasks.Task<IEnumerable<Models.User>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            using (var context = new StorageDbContext())
+            {
+                return context.Users.ToList();
+            }
         }
 
-        public System.Threading.Tasks.Task<Models.User> CreateUserAsync(Models.User User)
+        public async Task<User> CreateUserAsync(User User)
         {
-            throw new NotImplementedException();
+            User savedUser;
+
+            using (var context = new StorageDbContext())
+            {
+                savedUser = context.Users.Add(User);
+                await context.SaveChangesAsync();
+            }
+
+            return savedUser;
         }
 
-        public System.Threading.Tasks.Task<Models.User> UpdateUserAsync(int id, Models.User User)
+        public async Task<User> UpdateUserAsync(int id, User User)
         {
-            throw new NotImplementedException();
+            using (var context = new StorageDbContext())
+            {
+                var userToUpdate = await context.Users.FindAsync(id);
+                MergeUsers(userToUpdate, User);
+                await context.SaveChangesAsync();
+            }
+            return User;
         }
 
-        public System.Threading.Tasks.Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(int id)
         {
-            throw new NotImplementedException();
+            using (var context = new StorageDbContext())
+            {
+                var userToRemove = await context.Users.FindAsync(id);
+                context.Users.Remove(userToRemove);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private void MergeUsers(User UserToUpdate, User User)
+        {
+            UserToUpdate.UserType = User.UserType;
         }
     }
 }
