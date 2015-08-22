@@ -15,6 +15,7 @@ namespace KPMGAssessment.Context
         {
             if(!Database.Exists())
                 Database.Initialize(false);
+            this.Configuration.ProxyCreationEnabled = false;
         }
 
         public DbSet<Article> Articles { get; set; }

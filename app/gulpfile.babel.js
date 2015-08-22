@@ -28,15 +28,17 @@ function lint(files, options) {
       .pipe(reload({stream: true, once: true}))
       .pipe($.eslint(options))
       .pipe($.eslint.format())
-      .pipe($.if(!browserSync.active, $.eslint.failAfterError()));
+      .pipe($.if(!browserSync.active, $.eslint.failAfterError()))
+      .pipe(gulp.dest('dist/scripts'));
   };
 }
 
-gulp.task('lint', lint('build/scripts/**/*.js'));
+gulp.task('lint', lint(['build/scripts/*.js','build/scripts/**/*.js']));
 
 gulp.task('vendor-js', function()
 {
-  var scripts = ['bower_components/dist/*.min.js',
+  var scripts = ['bower_components/es6-promise/*.min.js',
+                  'bower_components/fetch/fetch.js',
                   'bower_components/react/*.min.js',
                 'bower_components/react-router/build/umd/*.min.js'];
 

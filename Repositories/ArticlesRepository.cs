@@ -14,7 +14,7 @@ namespace KPMGAssessment.Repositories
         {
             Article article;
 
-            using(var context = new StorageDbContext())
+            using (var context = new StorageDbContext())
             {
                 article = await context.Articles.FindAsync(id);
             }
@@ -26,7 +26,7 @@ namespace KPMGAssessment.Repositories
         {
             using (var context = new StorageDbContext())
             {
-                return context.Articles.ToList();
+                return context.Articles.Include("Author").Include("Comments").ToList();
             }
         }
 
@@ -47,7 +47,7 @@ namespace KPMGAssessment.Repositories
         {
             using (var context = new StorageDbContext())
             {
-                var articleToUpdate = await context.Articles.FindAsync(id);
+                var articleToUpdate = context.Articles.Include("Author").Include("Comments").Where(a=> a.Id == id).FirstOrDefault();
                 MergeArticles(articleToUpdate, article);
                 await context.SaveChangesAsync();
             }
