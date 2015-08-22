@@ -44,7 +44,7 @@ gulp.task('vendor-js', function()
 });
 
 gulp.task('templates', function () {
-  return gulp.src('build/scripts/*.jsx')
+  return gulp.src(['build/scripts/*.jsx','build/scripts/**/*.jsx'])
     .pipe($.react())
     .pipe(gulp.dest('dist/scripts'));
 });
