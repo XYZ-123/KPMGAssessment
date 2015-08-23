@@ -3,9 +3,10 @@ var Comment = React.createClass({
     return (
       <div className="comment">
         <h4 className="commentAuthor">
-          {this.props.author? this.props.author.Login: ""}
+          {this.props.author}
         </h4>
         <span>{this.props.body}</span>
+        <span>{this.props.published}</span>
       </div>
     );
   }

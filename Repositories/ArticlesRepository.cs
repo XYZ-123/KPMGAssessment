@@ -47,14 +47,15 @@ namespace KPMGAssessment.Repositories
 
         public async Task<Article> UpdateArticleAsync(int id, Article article)
         {
+            Article articleToUpdate;
             using (var context = new StorageDbContext())
             {
-                var articleToUpdate = context.Articles.Include("Author").Include("Comments").Include("Author").Where(a => a.Id == id).FirstOrDefault();
+                articleToUpdate = context.Articles.Include("Author").Include("Comments").Include("Author").Where(a => a.Id == id).FirstOrDefault();
                 
                 MergeArticles(articleToUpdate, article, context);
                 await context.SaveChangesAsync();
             }
-            return article;
+            return articleToUpdate;
         }
 
         public async Task DeleteArticleAsync(int id)
@@ -69,7 +70,7 @@ namespace KPMGAssessment.Repositories
 
         private void MergeArticles(Article articleToUpdate, Article article, StorageDbContext context)
         {
-            articleToUpdate.Title = article.Body;
+            articleToUpdate.Title = article.Title;
             articleToUpdate.Likes = article.Likes;
             articleToUpdate.LastEdited = article.LastEdited;
             articleToUpdate.Body = article.Body;
@@ -77,9 +78,8 @@ namespace KPMGAssessment.Repositories
             {
                 // Comment wasn't added
                 if(comment.Id == 0)
-                {
-                    context.Entry(comment.Author).State = EntityState.Unchanged;
-                    articleToUpdate.Comments.Add(comment);
+                {         
+                    articleToUpdate.Comments.Add(comment);                
                 }
             }
         }

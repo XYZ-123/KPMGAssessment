@@ -16,9 +16,6 @@ namespace KPMGAssessment.Models
 
         public DateTime Published { get; set; }
 
-        public int AuthorId { get; set; }
-
-        [ForeignKey("AuthorId")]
-        public virtual User Author { get; set; }
+        public string Author { get; set; }
     }
 }
