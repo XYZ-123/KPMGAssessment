@@ -37,3 +37,22 @@ body {
     margin:10px auto;
   }
 }
+.loading
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-gif
+{
+  position: relative;
+  font-size: 3em;
+  color: #d5d5d5;
+  width: 3em;
+  height: 3em;
+
+  background-image: url("../images/loading.svg");
+  background-size: 100% 100%;
+
+}
