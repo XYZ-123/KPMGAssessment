@@ -1,5 +1,5 @@
-var Articles = require('./pages/Articles');
-var Graphics = require('./pages/Graphics');
+var Articles = require('./pages/Articles/Articles');
+var Graphics = require('./pages/Graphics/Graphics');
 var LoginForm = require('./LoginForm');
 var Globals = require('./Globals');
 
