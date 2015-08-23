@@ -22,7 +22,7 @@ var Article = React.createClass({
         <span className="lastEdited">{new Date(this.props.data.LastEdited).toUTCString()}</span>
       </aside>
       <div className="comments">{commentNodes}</div>
-      <button onClick={this.handleDelete}>Delete Me</button>
+      {this.props.isOwner? <button onClick={this.handleDelete}>Delete Me</button>: null}
     </article>);
   }
 });

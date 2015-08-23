@@ -7,6 +7,7 @@ var articleList  = React.createClass({
     {
         var currentDate = new Date();
         var self = this;
+        var userId = JSON.parse(window.localStorage.getItem(Globals.userIdentity)).Id;
         fetch(Globals.baseUrl + Globals.articlesUrl,{  method: 'post',
           headers: {
             'Accept': 'application/json',
@@ -17,7 +18,7 @@ var articleList  = React.createClass({
             Body: data.body,
             DatePublished: currentDate.toISOString(),
             LastEdited: currentDate.toISOString(),
-            AuthorId: window.localStorage.getItem(Globals.userIdKey)
+            AuthorId: userId
           })
         }).then(function(response) {
               return response.json()
@@ -48,16 +49,32 @@ var articleList  = React.createClass({
         self.setState({articles:json});
       });
     },
+    isArticleOwner: function(publisherId)
+    {
+      if(window.localStorage.getItem(Globals.userIdentity)) {
+        var userIdentity = JSON.parse(window.localStorage.getItem(Globals.userIdentity));
+        return userIdentity && userIdentity.Id == publisherId;
+      }
+      return false;
+    },
+    isAllowedToPublish : function()
+    {
+      if(window.localStorage.getItem(Globals.userIdentity)) {
+        var userIdentity = JSON.parse(window.localStorage.getItem(Globals.userIdentity));
+        return userIdentity && userIdentity.UserType == 1;
+      }
+      return false;
+    },
     hookToLogin:function()
     {
       var self = this;
       window.addEventListener('storage',function(){
-          self.setState({isLoggedIn:!!window.localStorage.getItem(Globals.userIdKey)});
+          self.setState({isAllowedToPublish: self.isAllowedToPublish()});
       });
     },
     getInitialState:function()
     {
-      return {articles:[], isLoggedIn:!!window.localStorage.getItem(Globals.userIdKey)};
+      return {articles:[], isAllowedToPublish: this.isAllowedToPublish()};
     },
     componentDidMount:function()
     {
@@ -72,9 +89,10 @@ var articleList  = React.createClass({
       var self = this;
       var articleNodes = this.state.articles.map(function(article, index)
       {
-        return (<Article data={article} onDelete={self.handleDelete} key={index}/>)
+        var isOwner = self.isArticleOwner(article.AuthorId);
+        return (<Article data={article} isOwner={isOwner} onDelete={self.handleDelete} key={index}/>)
       });
-      return (<div><div>{this.state.isLoggedIn ? <ArticleForm onArticleSubmit={this.addNewArticle} /> : null}</div>
+      return (<div><div>{this.state.isAllowedToPublish ? <ArticleForm onArticleSubmit={this.addNewArticle} /> : null}</div>
         <div>{articleNodes}</div>
       </div>);
     }

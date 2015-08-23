@@ -6,12 +6,12 @@ var Globals = require('./Globals');
 var MainWindow = React.createClass({
   getInitialState: function()
   {
-    return {isLoggedIn: !!window.localStorage.getItem(Globals.userIdKey), UserName: window.localStorage.getItem(Globals.userNameKey)};
+    var userName = window.localStorage.getItem(Globals.userIdentity) ? JSON.parse(window.localStorage.getItem(Globals.userIdentity)).Login : "";
+    return {isLoggedIn: !!window.localStorage.getItem(Globals.userIdentity), UserName: userName};
   },
   handleLogout:function()
   {
-    window.localStorage.removeItem(Globals.userIdKey);
-    window.localStorage.removeItem(Globals.userNameKey);
+    window.localStorage.removeItem(Globals.userIdentity);
     window.dispatchEvent(new Event('storage'));
     this.setState({isLoggedIn:false, UserName:''});
   },
@@ -30,8 +30,7 @@ var MainWindow = React.createClass({
       }).then(function(response) {
         return response.json()
       }).then(function(user) {
-        window.localStorage.setItem(Globals.userIdKey, user.Id);
-        window.localStorage.setItem(Globals.userNameKey, user.Login);
+        window.localStorage.setItem(Globals.userIdentity, JSON.stringify(user));
         window.dispatchEvent(new Event('storage'));
         self.setState({isLoggedIn: true, UserName: user.Login});
       }).catch(function() {
@@ -48,8 +47,7 @@ var MainWindow = React.createClass({
           }).then(function (response) {
             return response.json()
           }).then(function (user) {
-            window.localStorage.setItem(Globals.userIdKey, user.Id);
-            window.localStorage.setItem(Globals.userNameKey, user.Login);
+            window.localStorage.setItem(Globals.userIdentity, JSON.stringify(user));
             window.dispatchEvent(new Event('storage'));
             self.setState({isLoggedIn: true, UserName: user.Login});
           });
@@ -58,7 +56,7 @@ var MainWindow = React.createClass({
   },
   render:function()
   {
-    return (<div>{this.state.isLoggedIn?<span>Hello,{this.state.UserName}<button onClick={this.handleLogout}>Log out</button></span> :<LoginForm  handleLogin={this.onLogin} />}<h1>Pressford consulting</h1>
+    return (<div>{this.state.isLoggedIn ? <span>Hello,{this.state.UserName}<button onClick={this.handleLogout}>Log out</button></span> :<LoginForm  handleLogin={this.onLogin} />}<h1>Pressford consulting</h1>
 
       <ul className="nav nav-pills">
         <li role="presentation"><ReactRouter.Link to="articles">Articles</ReactRouter.Link></li>
