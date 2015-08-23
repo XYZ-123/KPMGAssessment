@@ -2,6 +2,7 @@
 using KPMGAssessment.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -26,7 +27,7 @@ namespace KPMGAssessment.Repositories
         {
             using (var context = new StorageDbContext())
             {
-                return context.Articles.Include("Author").Include("Comments").ToList();
+                return context.Articles.Include("Author").Include("Comments").Include("Author").ToList();
             }
         }
 
@@ -38,7 +39,7 @@ namespace KPMGAssessment.Repositories
             {
                 savedArticle = context.Articles.Add(article);
                 await context.SaveChangesAsync();
-                savedArticle = context.Articles.Include("Author").Include("Comments").Where(a => a.Id == savedArticle.Id).FirstOrDefault();
+                savedArticle = context.Articles.Include("Author").Include("Comments").Include("Author").Where(a => a.Id == savedArticle.Id).FirstOrDefault();
             }
 
             return savedArticle;
@@ -48,8 +49,9 @@ namespace KPMGAssessment.Repositories
         {
             using (var context = new StorageDbContext())
             {
-                var articleToUpdate = context.Articles.Include("Author").Include("Comments").Where(a=> a.Id == id).FirstOrDefault();
-                MergeArticles(articleToUpdate, article);
+                var articleToUpdate = context.Articles.Include("Author").Include("Comments").Include("Author").Where(a => a.Id == id).FirstOrDefault();
+                
+                MergeArticles(articleToUpdate, article, context);
                 await context.SaveChangesAsync();
             }
             return article;
@@ -65,13 +67,21 @@ namespace KPMGAssessment.Repositories
             }
         }
 
-        private void MergeArticles(Article articleToUpdate, Article article)
+        private void MergeArticles(Article articleToUpdate, Article article, StorageDbContext context)
         {
             articleToUpdate.Title = article.Body;
             articleToUpdate.Likes = article.Likes;
             articleToUpdate.LastEdited = article.LastEdited;
             articleToUpdate.Body = article.Body;
-            articleToUpdate.Comments = articleToUpdate.Comments.Union(article.Comments).ToList();
+            foreach(var comment in article.Comments)
+            {
+                // Comment wasn't added
+                if(comment.Id == 0)
+                {
+                    context.Entry(comment.Author).State = EntityState.Unchanged;
+                    articleToUpdate.Comments.Add(comment);
+                }
+            }
         }
     }
 }

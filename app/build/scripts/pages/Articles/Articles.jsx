@@ -3,7 +3,11 @@ var ArticleForm = require("./ArticleForm");
 var Article = require("./Article");
 
 var articleList  = React.createClass({
-    addNewArticle: function(data)
+    getInitialState:function()
+    {
+      return {articles:[], isAllowedToPublish: this.isAllowedToPublish(), isLoggedIn:this.isLoggedIn()};
+    },
+  addNewArticle: function(data)
     {
         var currentDate = new Date();
         var self = this;
@@ -57,6 +61,10 @@ var articleList  = React.createClass({
       }
       return false;
     },
+    isLoggedIn:function()
+    {
+      return !!window.localStorage.getItem(Globals.userIdentity);
+    },
     isAllowedToPublish : function()
     {
       if(window.localStorage.getItem(Globals.userIdentity)) {
@@ -69,13 +77,10 @@ var articleList  = React.createClass({
     {
       var self = this;
       window.addEventListener('storage',function(){
-          self.setState({isAllowedToPublish: self.isAllowedToPublish()});
+          self.setState({isAllowedToPublish: self.isAllowedToPublish(), isLoggedIn:self.isLoggedIn()});
       });
     },
-    getInitialState:function()
-    {
-      return {articles:[], isAllowedToPublish: this.isAllowedToPublish()};
-    },
+
     componentDidMount:function()
     {
       this.loadArticlesFromServer();
@@ -90,7 +95,7 @@ var articleList  = React.createClass({
       var articleNodes = this.state.articles.map(function(article, index)
       {
         var isOwner = self.isArticleOwner(article.AuthorId);
-        return (<Article data={article} isOwner={isOwner} onDelete={self.handleDelete} key={index}/>)
+        return (<Article data={article} isLoggedIn={self.state.isLoggedIn} isOwner={isOwner} onDelete={self.handleDelete} key={index}/>)
       });
       return (<div><div>{this.state.isAllowedToPublish ? <ArticleForm onArticleSubmit={this.addNewArticle} /> : null}</div>
         <div>{articleNodes}</div>

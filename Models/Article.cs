@@ -22,9 +22,10 @@ namespace KPMGAssessment.Models
 
         public DateTime LastEdited { get; set; }
         
-        [ForeignKey("Author")]
+       
         public int AuthorId { get; set; }
 
+        [ForeignKey("AuthorId")]
         public virtual User Author { get; set; }
 
         public virtual List<Comment> Comments { get; set; }
