@@ -38,6 +38,7 @@ namespace KPMGAssessment.Repositories
             {
                 savedArticle = context.Articles.Add(article);
                 await context.SaveChangesAsync();
+                savedArticle = context.Articles.Include("Author").Include("Comments").Where(a => a.Id == savedArticle.Id).FirstOrDefault();
             }
 
             return savedArticle;

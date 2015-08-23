@@ -30,6 +30,14 @@ namespace KPMGAssessment.Repositories
             }
         }
 
+        public async Task<User> FindUserAsync(User user)
+        {
+            using (var context = new StorageDbContext())
+            {
+                return context.Users.Where(u => u.Login == user.Login && u.UserType == user.UserType).FirstOrDefault();
+            }
+        }
+
         public async Task<User> CreateUserAsync(User User)
         {
             User savedUser;
@@ -68,5 +76,7 @@ namespace KPMGAssessment.Repositories
         {
             UserToUpdate.UserType = User.UserType;
         }
+
+
     }
 }

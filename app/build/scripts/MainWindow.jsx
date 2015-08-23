@@ -1,11 +1,64 @@
 var Articles = require('./pages/Articles');
 var Graphics = require('./pages/Graphics');
 var LoginForm = require('./LoginForm');
+var Globals = require('./Globals');
 
 var MainWindow = React.createClass({
+  getInitialState: function()
+  {
+    return {isLoggedIn: !!window.localStorage.getItem(Globals.userIdKey), UserName: window.localStorage.getItem(Globals.userNameKey)};
+  },
+  handleLogout:function()
+  {
+    window.localStorage.removeItem(Globals.userIdKey);
+    window.localStorage.removeItem(Globals.userNameKey);
+    window.dispatchEvent(new Event('storage'));
+    this.setState({isLoggedIn:false, UserName:''});
+  },
+  onLogin: function(data)
+  {
+    var self = this;
+      fetch(Globals.baseUrl+Globals.usersUrl+'/verify',{ method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Login: data.userName,
+          UserType: data.userType
+        })
+      }).then(function(response) {
+        return response.json()
+      }).then(function(user) {
+        window.localStorage.setItem(Globals.userIdKey, user.Id);
+        window.localStorage.setItem(Globals.userNameKey, user.Login);
+        window.dispatchEvent(new Event('storage'));
+        self.setState({isLoggedIn: true, UserName: user.Login});
+      }).catch(function() {
+          fetch(Globals.baseUrl + Globals.usersUrl, {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              Login: data.userName,
+              UserType: data.userType
+            })
+          }).then(function (response) {
+            return response.json()
+          }).then(function (user) {
+            window.localStorage.setItem(Globals.userIdKey, user.Id);
+            window.localStorage.setItem(Globals.userNameKey, user.Login);
+            window.dispatchEvent(new Event('storage'));
+            self.setState({isLoggedIn: true, UserName: user.Login});
+          });
+      });
+
+  },
   render:function()
   {
-    return (<div><LoginForm /><h1>Pressford consulting</h1>
+    return (<div>{this.state.isLoggedIn?<span>Hello,{this.state.UserName}<button onClick={this.handleLogout}>Log out</button></span> :<LoginForm  handleLogin={this.onLogin} />}<h1>Pressford consulting</h1>
 
       <ul className="nav nav-pills">
         <li role="presentation"><ReactRouter.Link to="articles">Articles</ReactRouter.Link></li>

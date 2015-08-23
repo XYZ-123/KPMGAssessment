@@ -12,9 +12,11 @@ namespace KPMGAssessment.Repositories
 
         Task<IEnumerable<User>> GetAllAsync();
 
-        Task<User> CreateUserAsync(User User);
+        Task<User> CreateUserAsync(User user);
 
-        Task<User> UpdateUserAsync(int id, User User);
+        Task<User> FindUserAsync(User user);
+
+        Task<User> UpdateUserAsync(int id, User user);
 
         Task DeleteUserAsync(int id);
     }

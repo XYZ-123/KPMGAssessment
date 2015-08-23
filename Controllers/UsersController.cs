@@ -41,6 +41,7 @@ namespace KPMGAssessment.Controllers
             return new JsonResult<IEnumerable<User>>(users, serializerSettings, Encoding.Unicode, this);
         }
 
+      
         [Route("{id}")]
         [HttpGet]
         public async Task<IHttpActionResult> GetOne([FromUri]int id)
@@ -54,6 +55,8 @@ namespace KPMGAssessment.Controllers
 
             return new JsonResult<User>(user, serializerSettings, Encoding.Unicode, this);
         }
+
+       
 
         [Route("")]
         [HttpPost]
@@ -69,6 +72,20 @@ namespace KPMGAssessment.Controllers
             {
                 return new BadRequestErrorMessageResult(ex.Message, this);
             }
+        }
+
+        [Route("verify")]
+        [HttpPost]
+        public async Task<IHttpActionResult> Verify([FromBody] User user)
+        {
+            var foundUser = await repository.FindUserAsync(user);
+
+            if (foundUser == null)
+            {
+                return new StatusCodeResult(HttpStatusCode.NotFound, this);
+            }
+
+            return new JsonResult<User>(foundUser, serializerSettings, Encoding.Unicode, this);
         }
 
         [Route("{id}")]
