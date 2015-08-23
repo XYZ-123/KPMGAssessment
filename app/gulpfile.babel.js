@@ -8,8 +8,9 @@ const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
 gulp.task('styles', () => {
-  return gulp.src('build/styles/*.scss')
+  return gulp.src(['build/styles/*.scss','build/scripts/**/*.scss'])
     .pipe($.plumber())
+    .pipe($.concat('main.css'))
     .pipe($.sourcemaps.init())
     .pipe($.sass.sync({
       outputStyle: 'expanded',
@@ -40,7 +41,8 @@ gulp.task('vendor-js', function()
   var scripts = ['bower_components/es6-promise/*.min.js',
                   'bower_components/fetch/fetch.js',
                   'bower_components/react/*.min.js',
-                'bower_components/react-router/build/umd/*.min.js'];
+                  'bower_components/react-router/build/umd/*.min.js',
+                  'bower_components/Chart.js/*.min.js'];
 
   return gulp.src(scripts).pipe($.concat('vendor.js')).pipe(gulp.dest('dist/scripts'))
 });
@@ -99,7 +101,8 @@ gulp.task('serve',['build'], () => {
     'build/fonts/**/*'
   ]).on('change', reload);
 
-  gulp.watch('build/styles/**/*.scss', ['styles']);
+  gulp.watch('build/styles/**/*.scss', ['styles', reload]);
+  gulp.watch('build/scripts/**/*.scss', ['styles', reload]);
   gulp.watch('build/scripts/**/*.jsx', ['templates', reload]);
   gulp.watch('build/*.html', ['html', reload]);
   gulp.watch('build/scripts/**/*.js', ['lint', reload]);
@@ -112,6 +115,6 @@ gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras', 'vendor-js'], (
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-gulp.task('default', ['clean'], () => {
+gulp.task('rebuild', ['clean'], () => {
   gulp.start('build');
 });

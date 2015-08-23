@@ -2,6 +2,8 @@ var Articles = require('./pages/Articles/Articles');
 var Graphics = require('./pages/Graphics/Graphics');
 var LoginForm = require('./LoginForm');
 var Globals = require('./Globals');
+var LikesChart = require('./pages/Graphics/LikesChart');
+var UsersChart = require('./pages/Graphics/EmployeeVsPublisherChart');
 
 var MainWindow = React.createClass({
   getInitialState: function()
@@ -85,7 +87,10 @@ var routes = (
   <ReactRouter.Route handler={MainWindow} path="/">
     <ReactRouter.DefaultRoute handler={Articles} />
     <ReactRouter.Route name="articles" handler={Articles} />
-    <ReactRouter.Route name="graphics" handler={Graphics}/>
+    <ReactRouter.Route name="graphics" handler={Graphics}>
+      <ReactRouter.Route name="likesChart" handler={LikesChart} />
+      <ReactRouter.Route name="usersChart" handler={UsersChart} />
+    </ReactRouter.Route>
     <ReactRouter.Route name="dummypage1" handler={DummyPage1} />
     <ReactRouter.Route name="dummypage2" handler={DummyPage2}/>
   </ReactRouter.Route>

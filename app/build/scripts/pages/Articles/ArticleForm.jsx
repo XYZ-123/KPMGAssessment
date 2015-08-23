@@ -13,7 +13,7 @@ var ArticleForm = React.createClass({
   render:function(){
     return( <form className="form-group" onSubmit={this.handleSubmit}>
       <input className="form-control" type="text" placeholder="Enter an title here" ref="title" />
-      <input className="form-control" type="textarea" placeholder="Enter an article here" ref="body" />
+      <textarea className="form-control"  placeholder="Enter an article here" ref="body" ></textarea>
       <input className="btn btn-primary" type="submit" value="Create article" />
     </form>);
   }

@@ -1,0 +1,14 @@
+.charts
+{
+  height: 100%;
+  width: 90%;
+  margin:0 auto;
+  canvas
+  {
+    width:90%;
+    height:90%;
+    min-width:350px !important;
+    min-height:180px !important;
+    margin: 0 auto;
+  }
+}
