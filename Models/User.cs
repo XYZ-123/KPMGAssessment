@@ -14,5 +14,7 @@ namespace KPMGAssessment.Models
         public string Login { get; set; }
 
         public UserType UserType { get; set; }
+
+        public string ArticlesLiked { get; set; }
     }
 }

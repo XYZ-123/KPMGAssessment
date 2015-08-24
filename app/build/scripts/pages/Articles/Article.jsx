@@ -1,11 +1,11 @@
 var Comment = require("./Comment");
 var CommentForm = require("./CommentForm");
+var ArticleEditForm = require("./ArticleEditForm");
 var Globals = require('../../Globals');
 
 var Article = React.createClass({
   getInitialState:function()
   {
-    console.log('rendered');
       this.props.data.Comments = this.props.data.Comments || [];
       return {data: this.props.data, editMode: false, commentsVisible: false};
   },
@@ -39,18 +39,14 @@ var Article = React.createClass({
       })}).then(function(response) {
       return response.json()
     }).then(function(article) {
-      self.setState({editMode:false, data:article})
+      self.setState({editMode:false, data:article});
+      // Notify parent to re-render if needed
+      self.props.articleUpdated();
     });
   },
-  handleEdit:function(e)
+  handleEdit:function(data)
   {
-    e.preventDefault();
-    var body = React.findDOMNode(this.refs.body).value.trim();
-    var title = React.findDOMNode(this.refs.title).value.trim();
-    if (!title && !body) {
-      return;
-    }
-    this.updateArticle(title,body,0, this.state.data.Comments, new Date().toISOString());
+    this.updateArticle(data.title,data.body,0, this.state.data.Comments, new Date().toISOString());
   },
   handleAddComment: function(data)
   {
@@ -61,7 +57,7 @@ var Article = React.createClass({
     comments.push(comment);
     this.updateArticle(stateData.Title, stateData.Body, 0, comments, stateData.LastEdited);
   },
-  handleLike:function()
+  handleLike: function()
   {
     var data = this.state.data;
     var likedClassName = 'liked';
@@ -79,11 +75,11 @@ var Article = React.createClass({
       likeDelta = -1;
     }
     this.updateArticle(data.Title, data.Body, likeDelta, data.Comments, data.LastEdited);
+    this.props.onArticleLike(data.Id, likeDelta);
   },
   handleDelete:function(e)
   {
     e.preventDefault();
-    debugger;
     this.props.onDelete(this.state.data.Id);
   },
   toggleFullView:function()
@@ -96,39 +92,43 @@ var Article = React.createClass({
   },
   render:function()
   {
-    console.log("Loading article", this.state.data);
     var data = this.state.data;
     var commentNodes = data.Comments.map(function(comment)
     {
       return (<Comment author={comment.Author} body={comment.Body} published={comment.Published}/>);
     });
-    return (<article  className="article">
-        <span className="datePublished">Published at {new Date(data.DatePublished).toLocaleTimeString()} on {new Date(data.DatePublished).toLocaleDateString()}</span>
-      {this.state.editMode ?
-      <form className="editForm form-group" onSubmit={this.handleEdit}>
-      <input className="form-control" placeholder="title" type="text" ref="title" defaultValue={data.Title}/>
-      <textarea className="form-control"  placeholder="Enter an article here" ref="body" >{data.Body}</textarea>
-      <input className="btn btn-primary" type="submit" value="Save" />
-      <button className="btn btn-secondary" onClick={this.disableEditMode} value="Discard">Discard</button>
-    </form> : <div><header onClick={this.toggleFullView} className="title"><h2> {data.Title}</h2></header>
-      <div className="body"> {data.Body}</div></div>
-        }
-      <aside className="metaInfo"> <span className="glyphicon glyphicon-user"></span><span className="author">{data.Author.Login}</span>
-        <div className="likegroup">
-        {this.props.isLoggedIn ?<span> Like <span ref="like" onClick={this.handleLike} className="like"><span className="glyphicon glyphicon-thumbs-up"></span></span> </span>: null}
-          <span className="likes">{data.Likes}</span>
-        </div>
-        <a className="viewComments" href="javascript:void(0)" onClick={this.openComments}>View Comments ({data.Comments.length})</a>
-        {
-          this.props.isOwner?  <div className="tools"><a href="" onClick={this.handleDelete}><span className="glyphicon glyphicon-remove" ></span></a>
-          <a href="" onClick={this.enableEditMode}><span className="glyphicon glyphicon-pencil" ></span></a></div>: null}
-          <span className="lastEdited">Last edited:  {new Date(data.DatePublished).toLocaleTimeString()} {new Date(data.DatePublished).toLocaleDateString()}</span>
-          </aside>
-      {this.state.commentsVisible? <div>
-      <div className="comments">{commentNodes}</div>
-      {this.props.isLoggedIn ? <CommentForm onCommentAdd={this.handleAddComment} /> : null}
-        </div>:null}
-    </article>);
+    return (
+          <article  className="article">
+              <span className="datePublished">Published at {new Date(data.DatePublished).toLocaleTimeString()} on {new Date(data.DatePublished).toLocaleDateString()}</span>
+              {this.state.editMode ?
+                  <ArticleEditForm title={data.Title} body={data.Body} onDiscard={this.disableEditMode} onEditSubmit={this.handleEdit}/>
+                  :
+                  <div><header onClick={this.toggleFullView} className="title"><h2> {data.Title}</h2></header>
+                  <div className="body"> {data.Body}</div></div>
+              }
+              <aside className="metaInfo"> <span className="glyphicon glyphicon-user"></span><span className="author">{data.Author.Login}</span>
+              <div className="likegroup">
+                <span> Likes  <span className="likes">{data.Likes}</span></span>
+                {this.props.isLoggedIn ?
+                <span ref="like" onClick={this.handleLike} className={this.props.articleLiked ? "liked like": "like"}><span className="glyphicon glyphicon-thumbs-up"></span></span>
+                : null}
+              </div>
+              <a className="viewComments" href="javascript:void(0)" onClick={this.openComments}>View Comments ({data.Comments.length})</a>
+            {
+              this.props.isOwner?
+                <div className="tools"><a href="" onClick={this.handleDelete}><span className="glyphicon glyphicon-remove" ></span></a>
+                <a href="" onClick={this.enableEditMode}><span className="glyphicon glyphicon-pencil" ></span></a></div>
+                : null}
+              <span className="lastEdited">Last edited:  {new Date(data.LastEdited).toLocaleTimeString()} {new Date(data.LastEdited).toLocaleDateString()}</span>
+              </aside>
+          {
+            this.state.commentsVisible?
+              <div>
+                <div className="comments">{commentNodes}</div>
+              {this.props.isLoggedIn ? <CommentForm onCommentAdd={this.handleAddComment} /> : null}
+              </div>
+              :null}
+          </article>);
   }
 });
 

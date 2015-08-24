@@ -49,6 +49,7 @@ $icon-font-path: '../fonts/';
     margin-bottom: 0;
     font-family: 'Architects Daughter', cursive;
     font-size:1.1em;
+
     .container-fluid
     {
       padding:0;
@@ -57,11 +58,13 @@ $icon-font-path: '../fonts/';
     {
       border-radius: 5px;
       background-color: lightgray !important;
+      color: darken(grey,20%) !important;
     }
   }
   .wrapper
   {
     background-color:lighten(lightgrey,10%);
+    min-height:600px;
     padding-top: 1em;
   }
 

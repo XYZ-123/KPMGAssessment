@@ -33,6 +33,38 @@ var articleList  = React.createClass({
       self.setState({articles: articles});
     });
   },
+  handleLike:function(id, likeDelta)
+  {
+    debugger;
+    var userIdentity = JSON.parse(window.localStorage.getItem(Globals.userIdentity));
+    if(userIdentity.ArticlesLiked || likeDelta == 1)
+    {
+      debugger;
+      if(likeDelta == -1) {
+        userIdentity.ArticlesLiked.splice(userIdentity.ArticlesLiked.indexOf(id), 1);
+      }
+      else {
+        if(!userIdentity.ArticlesLiked)
+          userIdentity.ArticlesLiked = [];
+        userIdentity.ArticlesLiked.push(id);
+      }
+      fetch(Globals.baseUrl+Globals.usersUrl+"/"+userIdentity.Id,{
+        method: 'put',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Login: userIdentity.Login,
+          UserType: userIdentity.UserType,
+          ArticlesLiked: JSON.stringify(userIdentity.ArticlesLiked)
+        })}).then(function(response)
+      {
+        window.localStorage.setItem(Globals.userIdentity, JSON.stringify(userIdentity));
+
+      });
+    }
+  },
   handleDelete:function(id)
   {
     var self = this;
@@ -43,6 +75,7 @@ var articleList  = React.createClass({
         {
           return art.Id != id
         });
+        self.handleLike(id, -1);
         self.setState({articles:[]});
         self.setState({articles: articles});
         self.forceUpdate();
@@ -61,6 +94,7 @@ var articleList  = React.createClass({
           return aDatePublished > bDatePublished ? -1: aDatePublished == bDatePublished ? 0 : 1;
         }
       );
+      self.setState({articles:[]});
       self.setState({articles:articles});
     });
   },
@@ -84,6 +118,12 @@ var articleList  = React.createClass({
     }
     return false;
   },
+  wasArticleLiked:function(id)
+  {
+    debugger;
+      var user = JSON.parse(window.localStorage.getItem(Globals.userIdentity));
+      return !!user && !!user.ArticlesLiked && user.ArticlesLiked.indexOf(id) > -1;
+  },
   hookToLogin:function()
   {
     var self = this;
@@ -102,13 +142,17 @@ var articleList  = React.createClass({
   },
   render: function () {
     var self = this;
-    console.log('called render for Articles');
     var articleNodes = this.state.articles.map(function(article, index)
     {
       var isOwner = self.isArticleOwner(article.AuthorId);
-      return (<Article data={article} isLoggedIn={self.state.isLoggedIn} isOwner={isOwner} onDelete={self.handleDelete} key={index}/>)
+      var articleLiked = self.wasArticleLiked(article.Id);
+      console.log(articleLiked);
+      debugger;
+      return (<Article data={article} isLoggedIn={self.state.isLoggedIn} articleUpdated={self.loadArticlesFromServer} articleLiked={articleLiked} onArticleLike={self.handleLike} isOwner={isOwner} onDelete={self.handleDelete} key={index}/>)
     });
+
     var todayDate = new Date();
+
     var articles = this.state.articles.slice().filter(function(article)
     {
       var date = new Date (article.DatePublished);
@@ -119,15 +163,18 @@ var articleList  = React.createClass({
       }
     );
     var spotlightArticle = articles.length > 0? articles[0]: {};
-
+    var spotlightArticleLiked = this.wasArticleLiked(spotlightArticle.Id);
     return (<div className="articles col-lg-offset-2 col-md-offset-2 col-lg-6 col-md-6">{this.state.isAllowedToPublish ? <ArticleForm onArticleSubmit={this.addNewArticle} /> : null}
       <div className="spotlight">
         <header>Today's spotlight</header>
-        {articles.length > 0 ? <Article data={spotlightArticle} isLoggedIn={this.state.isLoggedIn} isOwner={false} onDelete={this.handleDelete} /> : <span>Like articles to get them here!</span>}
+        {articles.length > 0 ?
+          <Article data={spotlightArticle} articleUpdated={this.loadArticlesFromServer} articleLiked={spotlightArticleLiked} onArticleLike={this.handleLike} isLoggedIn={this.state.isLoggedIn} isOwner={false} onDelete={this.handleDelete} />
+          : <span>Like articles to get them here!</span>}
       </div>
       <div>
         <header>News Articles</header>
-        {articleNodes}</div>
+        {articleNodes.length > 0? articleNodes:<div className="welcome"><p><img className="noarticles" src="../../../images/sad-smiley-face.png"/>No articles yet.</p>Login as publisher to add your awesome news here!</div>}
+      </div>
     </div>);
   }
 });

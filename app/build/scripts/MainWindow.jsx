@@ -33,6 +33,7 @@ var MainWindow = React.createClass({
       }).then(function(response) {
         return response.json()
       }).then(function(user) {
+        user.ArticlesLiked = JSON.parse(user.ArticlesLiked);
         window.localStorage.setItem(Globals.userIdentity, JSON.stringify(user));
         window.dispatchEvent(new Event('storage'));
         self.setState({isLoggedIn: true, UserName: user.Login});

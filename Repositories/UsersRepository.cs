@@ -75,6 +75,7 @@ namespace KPMGAssessment.Repositories
         private void MergeUsers(User UserToUpdate, User User)
         {
             UserToUpdate.UserType = User.UserType;
+            UserToUpdate.ArticlesLiked = User.ArticlesLiked;
         }
 
 
