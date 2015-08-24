@@ -1,5 +1,5 @@
 var Globals = require("../../Globals");
-var ArticleForm = require("./ArticleForm");
+var ArticleForm = require("./ArticleSubmitForm");
 var Article = require("./Article");
 
 var articleList  = React.createClass({
@@ -35,11 +35,9 @@ var articleList  = React.createClass({
   },
   handleLike:function(id, likeDelta)
   {
-
     var userIdentity = JSON.parse(window.localStorage.getItem(Globals.userIdentity));
     if(userIdentity.ArticlesLiked || likeDelta == 1)
     {
-
       if(likeDelta == -1) {
         userIdentity.ArticlesLiked.splice(userIdentity.ArticlesLiked.indexOf(id), 1);
       }
@@ -61,7 +59,6 @@ var articleList  = React.createClass({
         })}).then(function(response)
       {
         window.localStorage.setItem(Globals.userIdentity, JSON.stringify(userIdentity));
-
       });
     }
   },
@@ -133,7 +130,6 @@ var articleList  = React.createClass({
   getSpotlightArticle:function(articlesData)
   {
     var todayDate = new Date();
-debugger;
     var articles = articlesData.slice().filter(function(article)
     {
       var date = new Date (article.DatePublished);

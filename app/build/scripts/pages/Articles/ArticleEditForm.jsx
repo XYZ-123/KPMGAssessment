@@ -11,11 +11,11 @@ var ArticleEditForm = React.createClass({
     },
     render: function () {
       return(<form className="editForm form-group" onSubmit={this.handleEdit}>
-        <input className="form-control" placeholder="title" type="text" ref="title" defaultValue={this.props.title}/>
-        <textarea className="form-control"  placeholder="Enter an article here" ref="body" >{this.props.body}</textarea>
-        <input className="btn btn-primary" type="submit" value="Save" />
-        <button className="btn btn-secondary" onClick={this.props.onDiscard} value="Discard">Discard</button>
-      </form>)
+                <input className="form-control" placeholder="title" type="text" ref="title" defaultValue={this.props.title}/>
+                <textarea className="form-control"  placeholder="Enter an article here" ref="body" >{this.props.body}</textarea>
+                <input className="btn btn-primary" type="submit" value="Save" />
+                <button className="btn btn-secondary" onClick={this.props.onDiscard} value="Discard">Discard</button>
+            </form>)
     }
 });
 

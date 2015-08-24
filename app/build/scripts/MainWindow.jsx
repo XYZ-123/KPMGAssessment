@@ -63,11 +63,15 @@ var MainWindow = React.createClass({
   {
     return (<div className="MainFrame col-lg-12 col-md-12 col-xs-12">
       {this.state.isLoggedIn ?
-      <div className="loginbox col-lg-3 col-xs-12 col-md-6 pull-right"><p>Hello, <span className="glyphicon glyphicon-user"> </span>{this.state.UserName}</p><button className="btn btn-secondary" onClick={this.handleLogout}>Log out</button></div> :
-      <LoginForm  handleLogin={this.onLogin} />}
+          <div className="loginbox col-lg-3 col-xs-12 col-md-6 pull-right">
+            <p>Hello, <span className="glyphicon glyphicon-user"> </span>{this.state.UserName}</p>
+            <button className="btn btn-secondary" onClick={this.handleLogout}>Log out</button>
+          </div>
+          :
+          <LoginForm  handleLogin={this.onLogin} />}
       <header>
-      <h1>Pressford consulting news</h1>
-    </header>
+        <h1>Pressford consulting news</h1>
+      </header>
       <nav className="navbar navbar-default">
         <div className="container-fluid">
           <div>
@@ -79,25 +83,26 @@ var MainWindow = React.createClass({
             </ul>
           </div>
         </div>
-        </nav>
+      </nav>
       <div className="wrapper col-xs-12 col-md-12 col-lg-12">
-    <ReactRouter.RouteHandler/>
-        </div>
+          <ReactRouter.RouteHandler/>
+      </div>
     </div>);
   }
 });
 
 var DummyPage1 = React.createClass({
   render:function() {
-    return (<div className="placeholder"><p>My creator was lazy to create a joke about me :(</p></div>);
+    return (<div className="placeholder"><p>My creator was too lazy to create a joke about me :(</p></div>);
   }
 });
 
 var DummyPage2 = React.createClass({
   render:function() {
-    return (<div className="placeholder"><p>I am dummy page 2</p></div>);
+    return (<div className="placeholder"><p>This isn't the page you are looking for</p><img src="http://www.climateaccess.org/sites/default/files/Obi%20wan.jpeg"/></div>);
   }
 });
+
 var routes = (
   <ReactRouter.Route handler={MainWindow} path="/">
     <ReactRouter.DefaultRoute handler={Welcome} />

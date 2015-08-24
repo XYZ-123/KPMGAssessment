@@ -21,7 +21,6 @@ namespace KPMGAssessment.Models
         public long Likes { get; set; }
 
         public DateTime LastEdited { get; set; }
-        
        
         public int AuthorId { get; set; }
 

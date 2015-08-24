@@ -1,5 +1,5 @@
-var Comment = require("./Comment");
-var CommentForm = require("./CommentForm");
+var Comment = require("./Comment/Comment");
+var CommentForm = require("./Comment/CommentForm");
 var ArticleEditForm = require("./ArticleEditForm");
 var Globals = require('../../Globals');
 
@@ -8,17 +8,6 @@ var Article = React.createClass({
   {
       this.props.data.Comments = this.props.data.Comments || [];
       return {data: this.props.data, editMode: false, commentsVisible: false};
-  },
-  enableEditMode:function(e)
-  {
-    e.preventDefault();
-    this.setState({editMode:true});
-    //React.findDOMNode(this.refs.title).value = this.state.data.Title;
-  },
-  disableEditMode:function(e)
-  {
-    e.preventDefault();
-    this.setState({editMode:false});
   },
   updateArticle: function(title, body, likeDelta, comments, lastEdited)
   {
@@ -40,8 +29,6 @@ var Article = React.createClass({
       return response.json()
     }).then(function(article) {
       self.setState({editMode:false, data:article});
-      // Notify parent to re-render if needed
-      //self.props.articleUpdated();
     });
   },
   handleEdit:function(data)
@@ -82,9 +69,15 @@ var Article = React.createClass({
     e.preventDefault();
     this.props.onDelete(this.state.data.Id);
   },
-  toggleFullView:function()
+  enableEditMode:function(e)
   {
-    console.log("clicked");
+    e.preventDefault();
+    this.setState({editMode:true});
+  },
+  disableEditMode:function(e)
+  {
+    e.preventDefault();
+    this.setState({editMode:false});
   },
   openComments: function()
   {
@@ -103,31 +96,35 @@ var Article = React.createClass({
               {this.state.editMode ?
                   <ArticleEditForm title={data.Title} body={data.Body} onDiscard={this.disableEditMode} onEditSubmit={this.handleEdit}/>
                   :
-                  <div><header onClick={this.toggleFullView} className="title"><h2> {data.Title}</h2></header>
+                  <div><header className="title"><h2> {data.Title}</h2></header>
                   <div className="body"> {data.Body}</div></div>
               }
               <aside className="metaInfo"> <span className="glyphicon glyphicon-user"></span><span className="author">{data.Author.Login}</span>
-              <div className="likegroup">
-                <span> Likes  <span className="likes">{data.Likes}</span></span>
-                {this.props.isLoggedIn ?
-                <span ref="like" onClick={this.handleLike} className={this.props.articleLiked ? "liked like": "like"}><span className="glyphicon glyphicon-thumbs-up"></span></span>
-                : null}
-              </div>
-              <a className="viewComments" href="javascript:void(0)" onClick={this.openComments}>View Comments ({data.Comments.length})</a>
-            {
-              this.props.isOwner?
-                <div className="tools"><a href="" onClick={this.handleDelete}><span className="glyphicon glyphicon-remove" ></span></a>
-                <a href="" onClick={this.enableEditMode}><span className="glyphicon glyphicon-pencil" ></span></a></div>
-                : null}
-              <span className="lastEdited">Last edited:  {new Date(data.LastEdited).toLocaleTimeString()} {new Date(data.LastEdited).toLocaleDateString()}</span>
+                <div className="likegroup">
+                  <span> Likes  <span className="likes">{data.Likes}</span></span>
+                  {this.props.isLoggedIn ?
+                         <span ref="like" onClick={this.handleLike} className={this.props.articleLiked ? "liked like": "like"}>
+                           <span className="glyphicon glyphicon-thumbs-up"></span>
+                         </span>
+                  : null}
+                </div>
+                <a className="viewComments" href="javascript:void(0)" onClick={this.openComments}>View Comments ({data.Comments.length})</a>
+                {this.props.isOwner?
+                    <div className="tools">
+                      <a href="" onClick={this.handleDelete}><span className="glyphicon glyphicon-remove" ></span></a>
+                      <a href="" onClick={this.enableEditMode}><span className="glyphicon glyphicon-pencil" ></span></a>
+                    </div>
+                    : null
+                }
+                <span className="lastEdited">Last edited:  {new Date(data.LastEdited).toLocaleTimeString()} {new Date(data.LastEdited).toLocaleDateString()}</span>
               </aside>
-          {
-            this.state.commentsVisible?
-              <div>
-                <div className="comments">{commentNodes}</div>
-              {this.props.isLoggedIn ? <CommentForm onCommentAdd={this.handleAddComment} /> : null}
-              </div>
-              :null}
+              {this.state.commentsVisible?
+                  <div>
+                    <div className="comments">{commentNodes}</div>
+                  {this.props.isLoggedIn ? <CommentForm onCommentAdd={this.handleAddComment} /> : null}
+                  </div>
+                  : null
+              }
           </article>);
   }
 });
