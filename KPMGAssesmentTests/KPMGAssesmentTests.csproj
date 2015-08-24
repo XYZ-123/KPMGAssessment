@@ -109,7 +109,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KPMGAssessment.csproj">
+    <ProjectReference Include="..\KPMGAssessment\KPMGAssessment.csproj">
       <Project>{8f77fbee-04cb-4a05-a853-d5cf3ff7fe4b}</Project>
       <Name>KPMGAssessment</Name>
     </ProjectReference>
