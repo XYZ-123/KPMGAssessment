@@ -104,7 +104,7 @@ var Article = React.createClass({
                   <span> Likes  <span className="likes">{data.Likes}</span></span>
                   {this.props.isLoggedIn ?
                          <span ref="like" onClick={this.handleLike} className={this.props.articleLiked ? "liked like": "like"}>
-                           <span className="glyphicon glyphicon-thumbs-up"></span>
+                           <span className="glyphicon g,lyphicon-thumbs-up"></span>
                          </span>
                   : null}
                 </div>

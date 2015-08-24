@@ -168,7 +168,6 @@ var articleList  = React.createClass({
       {
         var isOwner = self.isArticleOwner(article.AuthorId);
         var articleLiked = self.wasArticleLiked(article.Id);
-        console.log(articleLiked);
         return (<Article data={article} isLoggedIn={self.state.isLoggedIn} articleUpdated={self.loadArticlesFromServer}
                          articleLiked={articleLiked} onArticleLike={self.handleLike} isOwner={isOwner}
                          onDelete={self.handleDelete} key={index}/>)
