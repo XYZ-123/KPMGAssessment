@@ -3,10 +3,22 @@
   height: 100%;
   width: 90%;
   margin:0 auto;
+  .nav {
+    a{
+      background-color: white !important;
+      font-family: 'Architects Daughter', cursive;
+      font-size:1.1em;
+    }
+    a.active {
+      border-radius: 5px;
+      background-color: lightgray !important;
+      color: #4d4d4d !important;
+    }
+  }
   canvas
   {
     width:90%;
-    height:90%;
+    height:65%;
     min-width:350px !important;
     min-height:180px !important;
     margin: 0 auto;

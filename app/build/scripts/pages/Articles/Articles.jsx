@@ -35,11 +35,11 @@ var articleList  = React.createClass({
   },
   handleLike:function(id, likeDelta)
   {
-    debugger;
+
     var userIdentity = JSON.parse(window.localStorage.getItem(Globals.userIdentity));
     if(userIdentity.ArticlesLiked || likeDelta == 1)
     {
-      debugger;
+
       if(likeDelta == -1) {
         userIdentity.ArticlesLiked.splice(userIdentity.ArticlesLiked.indexOf(id), 1);
       }
@@ -120,7 +120,6 @@ var articleList  = React.createClass({
   },
   wasArticleLiked:function(id)
   {
-    debugger;
       var user = JSON.parse(window.localStorage.getItem(Globals.userIdentity));
       return !!user && !!user.ArticlesLiked && user.ArticlesLiked.indexOf(id) > -1;
   },
@@ -130,6 +129,21 @@ var articleList  = React.createClass({
     window.addEventListener('storage',function(){
       self.setState({isAllowedToPublish: self.isAllowedToPublish(), isLoggedIn:self.isLoggedIn()});
     });
+  },
+  getSpotlightArticle:function(articlesData)
+  {
+    var todayDate = new Date();
+debugger;
+    var articles = articlesData.slice().filter(function(article)
+    {
+      var date = new Date (article.DatePublished);
+      return date.toLocaleDateString() == todayDate.toLocaleDateString();
+    });
+    articles.sort(function(a,b){
+        return a.Likes > b.Likes ? -1: a.Likes == b.Likes ? 0 : 1;
+      }
+    );
+    return articles.length > 0 ? articles[0] : undefined;
   },
   componentDidMount:function()
   {
@@ -142,32 +156,26 @@ var articleList  = React.createClass({
   },
   render: function () {
     var self = this;
+    var spotlightArticle = this.getSpotlightArticle(this.state.articles);
+
     var articleNodes = this.state.articles.map(function(article, index)
     {
-      var isOwner = self.isArticleOwner(article.AuthorId);
-      var articleLiked = self.wasArticleLiked(article.Id);
-      console.log(articleLiked);
-      debugger;
-      return (<Article data={article} isLoggedIn={self.state.isLoggedIn} articleUpdated={self.loadArticlesFromServer} articleLiked={articleLiked} onArticleLike={self.handleLike} isOwner={isOwner} onDelete={self.handleDelete} key={index}/>)
-    });
-
-    var todayDate = new Date();
-
-    var articles = this.state.articles.slice().filter(function(article)
-    {
-      var date = new Date (article.DatePublished);
-      return date.toLocaleDateString() == todayDate.toLocaleDateString();
-    });
-    articles.sort(function(a,b){
-        return a.Likes > b.Likes ? -1: a.Likes == b.Likes ? 0 : 1;
+      if(!spotlightArticle || article.Id != spotlightArticle.Id)
+      {
+        var isOwner = self.isArticleOwner(article.AuthorId);
+        var articleLiked = self.wasArticleLiked(article.Id);
+        console.log(articleLiked);
+        return (<Article data={article} isLoggedIn={self.state.isLoggedIn} articleUpdated={self.loadArticlesFromServer}
+                         articleLiked={articleLiked} onArticleLike={self.handleLike} isOwner={isOwner}
+                         onDelete={self.handleDelete} key={index}/>)
       }
-    );
-    var spotlightArticle = articles.length > 0? articles[0]: {};
-    var spotlightArticleLiked = this.wasArticleLiked(spotlightArticle.Id);
+    });
+
+    var spotlightArticleLiked = spotlightArticle? this.wasArticleLiked(spotlightArticle.Id):0;
     return (<div className="articles col-lg-offset-2 col-md-offset-2 col-lg-6 col-md-6">{this.state.isAllowedToPublish ? <ArticleForm onArticleSubmit={this.addNewArticle} /> : null}
       <div className="spotlight">
         <header>Today's spotlight</header>
-        {articles.length > 0 ?
+        {articleNodes.length > 0 ?
           <Article data={spotlightArticle} articleUpdated={this.loadArticlesFromServer} articleLiked={spotlightArticleLiked} onArticleLike={this.handleLike} isLoggedIn={this.state.isLoggedIn} isOwner={false} onDelete={this.handleDelete} />
           : <span>Like articles to get them here!</span>}
       </div>

@@ -15,10 +15,10 @@ var LikesChart = React.createClass({
             datasets: [
               {
                 label: "Likes",
-                fillColor: "rgba(170, 199, 92, 1)",
-                strokeColor: "rgba(90, 111, 32, 1)",
+                fillColor: "rgba(58, 138, 187, 0.5)",
+                strokeColor: "rgba(58, 138, 187, 1)",
                 pointColor: "#fafafa",
-                pointStrokeColor: "#fff",
+                pointStrokeColor: "#fefefe",
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: "rgba(220,220,220,1)",
                 data: likesPlotted

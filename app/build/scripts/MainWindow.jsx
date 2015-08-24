@@ -1,5 +1,6 @@
 var Articles = require('./pages/Articles/Articles');
 var Graphics = require('./pages/Graphics/Graphics');
+var Welcome= require('./Welcome');
 var LoginForm = require('./LoginForm');
 var Globals = require('./Globals');
 var LikesChart = require('./pages/Graphics/LikesChart');
@@ -88,7 +89,7 @@ var MainWindow = React.createClass({
 
 var DummyPage1 = React.createClass({
   render:function() {
-    return (<div className="placeholder"><p>I am dummy page 1</p></div>);
+    return (<div className="placeholder"><p>My creator was lazy to create a joke about me :(</p></div>);
   }
 });
 
@@ -99,7 +100,7 @@ var DummyPage2 = React.createClass({
 });
 var routes = (
   <ReactRouter.Route handler={MainWindow} path="/">
-    <ReactRouter.DefaultRoute handler={Articles} />
+    <ReactRouter.DefaultRoute handler={Welcome} />
     <ReactRouter.Route name="articles" handler={Articles} />
     <ReactRouter.Route name="graphics" handler={Graphics}>
       <ReactRouter.DefaultRoute handler={LikesChart} />

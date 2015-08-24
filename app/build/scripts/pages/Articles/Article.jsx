@@ -41,7 +41,7 @@ var Article = React.createClass({
     }).then(function(article) {
       self.setState({editMode:false, data:article});
       // Notify parent to re-render if needed
-      self.props.articleUpdated();
+      //self.props.articleUpdated();
     });
   },
   handleEdit:function(data)
