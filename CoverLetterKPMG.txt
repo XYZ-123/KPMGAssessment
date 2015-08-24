@@ -1,0 +1,27 @@
+Application structure:
+Folder KPMGAssessment contains project for hosting backend web api.
+Folder KPMGAssessmentTests contains project for tests to KPMGAssessment.
+Folder app contains everything related to frontend.
+
+To run application:
+
+For backend part:
+- Make sure that you have SQLExpress available (is not a problem in most cases)
+- Open KPMGAssessment.sln and run project KPMGAssessment
+
+For frontend part:
+- go to folder 'app'
+- run in command line 'npm install'
+- run in command line 'bower install'
+- run in command line 'gulp serve'
+
+Frontend runs on port 9000, backend web api runs on port 9101.
+NOTE: If you wish to change port for backend part or host it somewhere other than on localhost, please be sure to change 'baseUrl' in file app/build/scripts/Globals.js
+
+Technologies used:
+Backend - ASP.NET WebApi, Unity, EF (Code First), XUnit
+Frontend - React, React-Router, Bootstrap, Gulp, SASS, require1k, Chart.js, Google Fonts
+
+In case of any questions please contact me via Skype - rudyuk.arthur or via email - rudyuk_artur@ukr.net
+
+NOTE: A lot of api calls that use fetch can and should be a separate service, I would do it if I was given time to improve it.
