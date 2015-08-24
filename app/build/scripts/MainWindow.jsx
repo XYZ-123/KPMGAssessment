@@ -59,16 +59,28 @@ var MainWindow = React.createClass({
   },
   render:function()
   {
-    return (<div>{this.state.isLoggedIn ? <span>Hello,{this.state.UserName}<button onClick={this.handleLogout}>Log out</button></span> :<LoginForm  handleLogin={this.onLogin} />}<h1>Pressford consulting</h1>
-
-      <ul className="nav nav-pills">
-        <li role="presentation"><ReactRouter.Link to="articles">Articles</ReactRouter.Link></li>
-        <li role="presentation"><ReactRouter.Link to="graphics">Graphics</ReactRouter.Link></li>
-        <li role="presentation"><ReactRouter.Link to="dummypage1">Another page</ReactRouter.Link></li>
-        <li role="presentation"><ReactRouter.Link to="dummypage2">One more page</ReactRouter.Link></li>
-
-      </ul>
+    return (<div className="MainFrame col-lg-12 col-md-12 col-xs-12">
+      {this.state.isLoggedIn ?
+      <div className="loginbox col-lg-3 col-xs-12 col-md-6 pull-right"><p>Hello, <span className="glyphicon glyphicon-user"> </span>{this.state.UserName}</p><button className="btn btn-secondary" onClick={this.handleLogout}>Log out</button></div> :
+      <LoginForm  handleLogin={this.onLogin} />}
+      <header>
+      <h1>Pressford consulting news</h1>
+    </header>
+      <nav className="navbar navbar-default">
+        <div className="container-fluid">
+          <div>
+            <ul className="nav navbar-nav" >
+              <li role="presentation"><ReactRouter.Link to="articles">Articles</ReactRouter.Link></li>
+              <li role="presentation"><ReactRouter.Link to="graphics">Graphics</ReactRouter.Link></li>
+              <li role="presentation"><ReactRouter.Link to="dummypage1">Another page</ReactRouter.Link></li>
+              <li role="presentation"><ReactRouter.Link to="dummypage2">One more page</ReactRouter.Link></li>
+            </ul>
+          </div>
+        </div>
+        </nav>
+      <div className="wrapper col-xs-12 col-md-12 col-lg-12">
     <ReactRouter.RouteHandler/>
+        </div>
     </div>);
   }
 });

@@ -2,11 +2,13 @@ var Comment = React.createClass({
   render: function() {
     return (
       <div className="comment">
-        <h4 className="commentAuthor">
-          {this.props.author}
+
+          <span className="datePublished">{new Date(this.props.published).toLocaleTimeString()} {new Date(this.props.published).toLocaleDateString()}</span>
+          <h4 className="commentAuthor">
+            <span className="glyphicon glyphicon-user"></span> {this.props.author} commented:
         </h4>
-        <span>{this.props.body}</span>
-        <span>{this.props.published}</span>
+        <span className="body">{this.props.body}</span>
+
       </div>
     );
   }

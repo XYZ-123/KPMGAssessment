@@ -1,0 +1,146 @@
+.articles
+{
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.7);
+  border-radius: 10px;
+  padding-top: 1em;
+  position:relative;
+  .articleform
+  {
+    text-align:center;
+    padding:1em;
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.7);
+    border-radius: 10px;
+    @media (min-width:1100px) {
+      position: absolute;
+      width: 300px;
+      right: -330px;
+      top: 0;
+      input[type=text], textarea
+      {
+        width: 90%;
+      }
+    }
+
+    input[type=text], textarea
+    {
+      margin:0.5em;
+    }
+    textarea
+    {
+      height: 150px;
+    }
+
+  }
+
+  header
+    {
+      font-size: 1.3em;
+      text-align: center;
+    }
+  article
+  {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 0.5em;
+    margin: 1em 0;
+    background: white;
+    .datePublished
+    {
+      font-size: 0.8em;
+      font-family: 'Open Sans', sans-serif;
+    }
+    .body
+    {
+      padding: 1em 0;
+      font-family: 'Open Sans', sans-serif;
+    }
+    .comment
+    {
+      border: 1px solid lightgrey;
+      margin: 1em 0;
+      padding: 0.5em;
+      .datePublished
+      {
+        font-size: 0.8em;
+        font-family: 'Open Sans', sans-serif;
+      }
+    }
+    .editForm
+    {
+      input[type=text], textarea
+      {
+        margin: 0.3em;
+        width:80%;
+      }
+      textarea
+      {
+        height: 150px;
+      }
+      button
+      {
+        margin-left:0.5em;
+      }
+    }
+    .commentForm
+    {
+      text-align: center;
+      textarea
+      {
+        width:70%;
+        margin: 0 auto;
+        display:block;
+      }
+    }
+    aside{
+      .likegroup
+      {
+        padding:0 5px;
+        margin: 0 5px;
+        border-left: 2px solid grey;
+        border-right: 2px solid grey;
+        display: inline;
+        .like
+        {
+          height: 20px;
+          &:hover {
+            cursor: pointer;
+            background-color: lightgray;
+          }
+        }
+        .liked
+        {
+          background-color: lightgray;
+        }
+      }
+
+      .viewComments
+      {
+        color: grey;
+        padding-right:5px;
+        margin-right: 5px;
+        border-right: 2px solid grey;
+      }
+      .tools
+      {
+        color: grey;
+        padding-right:5px;
+        margin-right: 5px;
+        border-right: 2px solid grey;
+        display:inline;
+      }
+      .lastEdited
+      {
+        font-size: 0.8em;
+        font-family: 'Open Sans', sans-serif;
+      }
+    }
+
+    header
+    {
+      &:hover
+      {
+        cursor: pointer;
+      }
+    }
+  }
+}

@@ -12,8 +12,8 @@ var CommentForm = React.createClass({
     },
     render: function () {
       return ( <form className="commentForm form-group" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Add comment to article above" ref="text" />
-        <input type="submit" value="Post" />
+        <textarea  placeholder="Add comment to article above" ref="text" ></textarea>
+        <input className="btn btn-primary" type="submit" value="Post" />
       </form>);
     }
 });

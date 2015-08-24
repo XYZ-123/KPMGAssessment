@@ -5,16 +5,19 @@ var Globals = require('../../Globals');
 var Article = React.createClass({
   getInitialState:function()
   {
+    console.log('rendered');
       this.props.data.Comments = this.props.data.Comments || [];
-      return {data: this.props.data, editMode: false};
+      return {data: this.props.data, editMode: false, commentsVisible: false};
   },
-  enableEditMode:function()
+  enableEditMode:function(e)
   {
+    e.preventDefault();
     this.setState({editMode:true});
     //React.findDOMNode(this.refs.title).value = this.state.data.Title;
   },
-  disableEditMode:function()
+  disableEditMode:function(e)
   {
+    e.preventDefault();
     this.setState({editMode:false});
   },
   updateArticle: function(title, body, likeDelta, comments, lastEdited)
@@ -77,9 +80,19 @@ var Article = React.createClass({
     }
     this.updateArticle(data.Title, data.Body, likeDelta, data.Comments, data.LastEdited);
   },
-  handleDelete:function()
+  handleDelete:function(e)
   {
+    e.preventDefault();
+    debugger;
     this.props.onDelete(this.state.data.Id);
+  },
+  toggleFullView:function()
+  {
+    console.log("clicked");
+  },
+  openComments: function()
+  {
+    this.setState({commentsVisible:!this.state.commentsVisible});
   },
   render:function()
   {
@@ -89,27 +102,32 @@ var Article = React.createClass({
     {
       return (<Comment author={comment.Author} body={comment.Body} published={comment.Published}/>);
     });
-    return this.state.editMode ?
-      (<form className="articleform form-group" onSubmit={this.handleEdit}>
-        <input className="form-control" placeholder="title" type="text" ref="title" defaultValue={data.Title}/>
-        <textarea className="form-control"  placeholder="Enter an article here" ref="body" >{data.Body}</textarea>
-        <input className="btn btn-primary" type="submit" value="Save" />
-        <button className="btn btn-secondary" onClick={this.disableEditMode} value="Discard">Discard</button>
-      </form>)
-      :
-      (<article className="article">
-      <header className="title"><h2> {data.Title}</h2></header>
-      <div className="body"> {data.Body}</div>
-      <aside className="metaInfo"> <span className="author">{data.Author.Login}</span>
-        <span className="likes">{data.Likes}</span>
-        {this.props.isLoggedIn ? <span ref="like" onClick={this.handleLike} className="like">Like</span> : null}
-        {this.props.isOwner? <button onClick={this.handleDelete}>Delete Me</button>: null}
-        {this.props.isOwner? <button onClick={this.enableEditMode}>Edit</button>: null}
-        <span className="datePublished">{new Date(data.DatePublished).toUTCString()}</span>
-        <span className="lastEdited">{new Date(data.LastEdited).toUTCString()}</span>
-      </aside>
+    return (<article  className="article">
+        <span className="datePublished">Published at {new Date(data.DatePublished).toLocaleTimeString()} on {new Date(data.DatePublished).toLocaleDateString()}</span>
+      {this.state.editMode ?
+      <form className="editForm form-group" onSubmit={this.handleEdit}>
+      <input className="form-control" placeholder="title" type="text" ref="title" defaultValue={data.Title}/>
+      <textarea className="form-control"  placeholder="Enter an article here" ref="body" >{data.Body}</textarea>
+      <input className="btn btn-primary" type="submit" value="Save" />
+      <button className="btn btn-secondary" onClick={this.disableEditMode} value="Discard">Discard</button>
+    </form> : <div><header onClick={this.toggleFullView} className="title"><h2> {data.Title}</h2></header>
+      <div className="body"> {data.Body}</div></div>
+        }
+      <aside className="metaInfo"> <span className="glyphicon glyphicon-user"></span><span className="author">{data.Author.Login}</span>
+        <div className="likegroup">
+        {this.props.isLoggedIn ?<span> Like <span ref="like" onClick={this.handleLike} className="like"><span className="glyphicon glyphicon-thumbs-up"></span></span> </span>: null}
+          <span className="likes">{data.Likes}</span>
+        </div>
+        <a className="viewComments" href="javascript:void(0)" onClick={this.openComments}>View Comments ({data.Comments.length})</a>
+        {
+          this.props.isOwner?  <div className="tools"><a href="" onClick={this.handleDelete}><span className="glyphicon glyphicon-remove" ></span></a>
+          <a href="" onClick={this.enableEditMode}><span className="glyphicon glyphicon-pencil" ></span></a></div>: null}
+          <span className="lastEdited">Last edited:  {new Date(data.DatePublished).toLocaleTimeString()} {new Date(data.DatePublished).toLocaleDateString()}</span>
+          </aside>
+      {this.state.commentsVisible? <div>
       <div className="comments">{commentNodes}</div>
       {this.props.isLoggedIn ? <CommentForm onCommentAdd={this.handleAddComment} /> : null}
+        </div>:null}
     </article>);
   }
 });

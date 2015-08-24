@@ -15,9 +15,9 @@ var CommentsChart = React.createClass({
         datasets: [
           {
             label: "Likes",
-            fillColor: "rgba(220,220,220,0.2)",
-            strokeColor: "rgba(220,220,220,1)",
-            pointColor: "rgba(220,220,220,1)",
+            fillColor: "rgba(170, 199, 92, 1)",
+            strokeColor: "rgba(90, 111, 32, 1)",
+            pointColor: "#fafafa",
             pointStrokeColor: "#fff",
             pointHighlightFill: "#fff",
             pointHighlightStroke: "rgba(220,220,220,1)",

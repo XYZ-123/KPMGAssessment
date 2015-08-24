@@ -5,13 +5,12 @@ var Article = require("./Article");
 var articleList  = React.createClass({
   getInitialState:function()
   {
-    return {articles:[], isAllowedToPublish: this.isAllowedToPublish(), isLoggedIn:this.isLoggedIn()};
+    return {articles:[], isAllowedToPublish: this.isAllowedToPublish(), isLoggedIn:this.isLoggedIn(), someFlag:false};
   },
   addNewArticle: function(data)
   {
     var currentDate = new Date();
     var self = this;
-
     var userId = JSON.parse(window.localStorage.getItem(Globals.userIdentity)).Id;
     fetch(Globals.baseUrl + Globals.articlesUrl,{  method: 'post',
       headers: {
@@ -27,9 +26,11 @@ var articleList  = React.createClass({
       })
     }).then(function(response) {
       return response.json()
-    }).then(function(json) {
-      self.state.articles.push(json);
-      self.setState({articles:self.state.articles});
+    }).then(function(article) {
+      var articles = self.state.articles.slice();
+      articles.unshift(article);
+      self.setState({articles:[]});
+      self.setState({articles: articles});
     });
   },
   handleDelete:function(id)
@@ -37,21 +38,30 @@ var articleList  = React.createClass({
     var self = this;
     fetch(Globals.baseUrl + Globals.articlesUrl+'/'+id,{
       method:'delete'
-    }).then(function() {
-      fetch(Globals.baseUrl+Globals.articlesUrl).then(function(response) {
-        return response.json()
-      }).then(function(json) {
-        self.setState({articles:json});
-      });
-    });
+    }).then(function(response) {
+        var articles = self.state.articles.slice().filter(function(art)
+        {
+          return art.Id != id
+        });
+        self.setState({articles:[]});
+        self.setState({articles: articles});
+        self.forceUpdate();
+      }
+    );
   },
   loadArticlesFromServer: function()
   {
     var self = this;
     fetch(Globals.baseUrl+Globals.articlesUrl).then(function(response) {
       return response.json()
-    }).then(function(json) {
-      self.setState({articles:json});
+    }).then(function(articles) {
+      articles.sort(function(a,b){
+          var aDatePublished= new Date(a.DatePublished);
+          var bDatePublished= new Date(b.DatePublished);
+          return aDatePublished > bDatePublished ? -1: aDatePublished == bDatePublished ? 0 : 1;
+        }
+      );
+      self.setState({articles:articles});
     });
   },
   isArticleOwner: function(publisherId)
@@ -81,7 +91,6 @@ var articleList  = React.createClass({
       self.setState({isAllowedToPublish: self.isAllowedToPublish(), isLoggedIn:self.isLoggedIn()});
     });
   },
-
   componentDidMount:function()
   {
     this.loadArticlesFromServer();
@@ -93,6 +102,7 @@ var articleList  = React.createClass({
   },
   render: function () {
     var self = this;
+    console.log('called render for Articles');
     var articleNodes = this.state.articles.map(function(article, index)
     {
       var isOwner = self.isArticleOwner(article.AuthorId);
@@ -109,12 +119,14 @@ var articleList  = React.createClass({
       }
     );
     var spotlightArticle = articles.length > 0? articles[0]: {};
-    return (<div><div>{this.state.isAllowedToPublish ? <ArticleForm onArticleSubmit={this.addNewArticle} /> : null}</div>
-      <div>
-        <header>Today spotlight</header>
+
+    return (<div className="articles col-lg-offset-2 col-md-offset-2 col-lg-6 col-md-6">{this.state.isAllowedToPublish ? <ArticleForm onArticleSubmit={this.addNewArticle} /> : null}
+      <div className="spotlight">
+        <header>Today's spotlight</header>
         {articles.length > 0 ? <Article data={spotlightArticle} isLoggedIn={this.state.isLoggedIn} isOwner={false} onDelete={this.handleDelete} /> : <span>Like articles to get them here!</span>}
       </div>
-      <div> <header>News Articles</header>
+      <div>
+        <header>News Articles</header>
         {articleNodes}</div>
     </div>);
   }
