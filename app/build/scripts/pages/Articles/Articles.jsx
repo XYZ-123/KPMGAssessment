@@ -27,6 +27,7 @@ var articleList  = React.createClass({
     }).then(function(response) {
       return response.json()
     }).then(function(article) {
+      //Add created article to the top
       var articles = self.state.articles.slice();
       articles.unshift(article);
       self.setState({articles:[]});
@@ -46,6 +47,7 @@ var articleList  = React.createClass({
           userIdentity.ArticlesLiked = [];
         userIdentity.ArticlesLiked.push(id);
       }
+
       fetch(Globals.baseUrl+Globals.usersUrl+"/"+userIdentity.Id,{
         method: 'put',
         headers: {
@@ -58,6 +60,7 @@ var articleList  = React.createClass({
           ArticlesLiked: JSON.stringify(userIdentity.ArticlesLiked)
         })}).then(function(response)
       {
+        //Update user likes
         window.localStorage.setItem(Globals.userIdentity, JSON.stringify(userIdentity));
       });
     }
@@ -73,6 +76,7 @@ var articleList  = React.createClass({
           return art.Id != id
         });
         self.handleLike(id, -1);
+        //React doesnt re-render w.o this
         self.setState({articles:[]});
         self.setState({articles: articles});
         self.forceUpdate();
@@ -91,6 +95,7 @@ var articleList  = React.createClass({
           return aDatePublished > bDatePublished ? -1: aDatePublished == bDatePublished ? 0 : 1;
         }
       );
+      //React doesnt re-render w.o this
       self.setState({articles:[]});
       self.setState({articles:articles});
     });
@@ -130,11 +135,14 @@ var articleList  = React.createClass({
   getSpotlightArticle:function(articlesData)
   {
     var todayDate = new Date();
+
+    //Take only articles for today
     var articles = articlesData.slice().filter(function(article)
     {
       var date = new Date (article.DatePublished);
       return date.toLocaleDateString() == todayDate.toLocaleDateString();
     });
+
     articles.sort(function(a,b){
         return a.Likes > b.Likes ? -1: a.Likes == b.Likes ? 0 : 1;
       }

@@ -22,6 +22,7 @@ var MainWindow = React.createClass({
   onLogin: function(data)
   {
     var self = this;
+    //Try to first find user, then if not - create
       fetch(Globals.baseUrl+Globals.usersUrl+'/verify',{ method: 'post',
         headers: {
           'Accept': 'application/json',
@@ -34,11 +35,13 @@ var MainWindow = React.createClass({
       }).then(function(response) {
         return response.json()
       }).then(function(user) {
+        // User exists
         user.ArticlesLiked = JSON.parse(user.ArticlesLiked);
         window.localStorage.setItem(Globals.userIdentity, JSON.stringify(user));
         window.dispatchEvent(new Event('storage'));
         self.setState({isLoggedIn: true, UserName: user.Login});
       }).catch(function() {
+          // User doesnt exist, need to create one
           fetch(Globals.baseUrl + Globals.usersUrl, {
             method: 'post',
             headers: {
@@ -52,6 +55,7 @@ var MainWindow = React.createClass({
           }).then(function (response) {
             return response.json()
           }).then(function (user) {
+            //Set user to localstorage
             window.localStorage.setItem(Globals.userIdentity, JSON.stringify(user));
             window.dispatchEvent(new Event('storage'));
             self.setState({isLoggedIn: true, UserName: user.Login});
